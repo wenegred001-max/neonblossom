@@ -1,0 +1,85 @@
+:root {
+    --node-size: 20px;
+    --border-color: #cbd5e1;
+    --plat-glow: rgba(226, 232, 240, 0.4);
+}
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.minimap-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    height: 280px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    box-sizing: border-box;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 16px var(--plat-glow), inset 0 0 12px rgba(226, 232, 240, 0.15);
+    border-radius: 4px;
+}
+
+.minimap-overlay.no-border {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.minimap-overlay.pos-right { 
+    left: auto; 
+    right: 0; 
+}
+
+.spawn-node {
+    position: absolute;
+    width: var(--node-size);
+    height: var(--node-size);
+    transform: translate(-50%, -50%);
+}
+
+.spawn-node svg { width: 100%; height: 100%; overflow: visible; }
+.spawn-node circle.bg { stroke: rgba(15, 23, 42, 0.9); stroke-width: 3; fill: rgba(13, 17, 23, 0.92); }
+.spawn-node circle.progress {
+    stroke-width: 4; 
+    fill: none; 
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+    transform: rotate(-90deg); 
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.3s linear;
+}
+
+.spawn-node text { font-size: 14px; dominant-baseline: central; text-anchor: middle; transition: opacity 0.2s; }
+.hide-icons .spawn-node text { opacity: 0 !important; }
+
+.wisdom circle.progress { stroke: var(--color-wisdom, #a855f7); filter: drop-shadow(0 0 6px var(--color-wisdom, #a855f7)); }
+.lotus circle.progress  { stroke: var(--color-lotus, #ff66cc); filter: drop-shadow(0 0 6px var(--color-lotus, #ff66cc)); }
+.bounty circle.progress { stroke: var(--color-bounty, #ff9900); filter: drop-shadow(0 0 6px var(--color-bounty, #ff9900)); }
+.water-rune circle.progress { stroke: var(--color-water, #00d2ff); filter: drop-shadow(0 0 6px var(--color-water, #00d2ff)); }
+
+.active-rune circle.progress { 
+    stroke: var(--color-active, #cbd5e1); 
+    filter: drop-shadow(0 0 10px var(--color-active, #cbd5e1)); 
+    animation: platPulse 1s infinite alternate; 
+}
+
+@keyframes platPulse { from { opacity: 0.6; } to { opacity: 1; } }
+
+#wisdom-top-left  { top: 45%; left: 4%; }
+#wisdom-bot-right { top: 56%; left: 96%; }
+#lotus-top        { top: 26%; left: 7.5%; }
+#lotus-bot        { top: 76%; left: 92.5%; }
+#bounty-top       { top: 25%; left: 44%; }
+#bounty-bot       { top: 77%; left: 53%; }
+#river-top        { top: 44%; left: 41%; }
+#river-bot        { top: 57%; left: 57%; }
