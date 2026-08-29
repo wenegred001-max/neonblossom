@@ -5,6 +5,7 @@ const translations = {
         tab_visuals: "ВИЗУАЛЫ",
         tab_config: "КОНФИГУРАЦИЯ",
         tab_settings: "НАСТРОЙКИ",
+        tab_pro_features: "PRO FEATURES",
         p_map_title: "Миникарта",
         lbl_map_pos: "Позиция миникарты:",
         opt_left: "Слева (Стандарт)",
@@ -40,6 +41,15 @@ const translations = {
         chk_sound_alerts: "Звуковой сигнал за 10 сек",
         lbl_volume: "Громкость оповещений",
         chk_streamer_mode: "Скрыть от OBS / Захвата",
+        p_pro_features: "PRO Функции",
+        pro_burst_calc: "Smart Burst Calculator",
+        pro_tactical_overlay: "Tactical Overlay (Hotkeys)",
+        pro_micro_assistant: "Pro-Micro Efficiency",
+        p_hotkey_config: "Настройка Хоткеев",
+        lbl_blackhole_key: "Black Hole Timer:",
+        lbl_ravage_key: "Ravage Timer:",
+        lbl_roshan_key: "Roshan Timers:",
+        btn_apply_hotkeys: "Применить Хоткеи",
         btn_apply: "Применить",
         btn_reset: "Сброс"
     },
@@ -47,6 +57,7 @@ const translations = {
         tab_visuals: "VISUALS",
         tab_config: "CONFIG",
         tab_settings: "SETTINGS",
+        tab_pro_features: "PRO FEATURES",
         p_map_title: "Minimap",
         lbl_map_pos: "Minimap Position:",
         opt_left: "Left (Default)",
@@ -82,6 +93,15 @@ const translations = {
         chk_sound_alerts: "Sound Alert 10s Before Spawn",
         lbl_volume: "Alert Volume",
         chk_streamer_mode: "Hide from OBS / Capture",
+        p_pro_features: "PRO Features",
+        pro_burst_calc: "Smart Burst Calculator",
+        pro_tactical_overlay: "Tactical Overlay (Hotkeys)",
+        pro_micro_assistant: "Pro-Micro Efficiency",
+        p_hotkey_config: "Hotkey Configuration",
+        lbl_blackhole_key: "Black Hole Timer:",
+        lbl_ravage_key: "Ravage Timer:",
+        lbl_roshan_key: "Roshan Timers:",
+        btn_apply_hotkeys: "Apply Hotkeys",
         btn_apply: "Apply",
         btn_reset: "Reset"
     }
@@ -206,6 +226,72 @@ document.getElementById('btnExportJson').addEventListener('click', () => {
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+});
+
+// PRO FEATURES HANDLERS
+let currentProConfig = {
+    burstCalculator: true,
+    tacticalOverlay: true,
+    microAssistant: true,
+    tacticalHotkeys: {
+        blackHole: { key: 'Numpad1', duration: 160 },
+        ravage: { key: 'Numpad2', duration: 150 },
+        roshan: { key: 'Numpad0', durations: { aegis: 300, minSpawn: 480, maxSpawn: 660 } }
+    }
+};
+
+// Receive PRO config from main process
+ipcRenderer.on('pro-config', (event, config) => {
+    currentProConfig = config;
+    // Update UI with current config
+    document.getElementById('enableBurstCalc').checked = config.burstCalculator;
+    document.getElementById('enableTacticalOverlay').checked = config.tacticalOverlay;
+    document.getElementById('enableMicroAssistant').checked = config.microAssistant;
+});
+
+// Send PRO config to main process
+function sendProConfig() {
+    const proConfig = {
+        burstCalculator: document.getElementById('enableBurstCalc').checked,
+        tacticalOverlay: document.getElementById('enableTacticalOverlay').checked,
+        microAssistant: document.getElementById('enableMicroAssistant').checked,
+        tacticalHotkeys: {
+            blackHole: { 
+                key: document.getElementById('blackHoleKey').value,
+                duration: currentProConfig.tacticalHotkeys.blackHole.duration 
+            },
+            ravage: { 
+                key: document.getElementById('ravageKey').value,
+                duration: currentProConfig.tacticalHotkeys.ravage.duration 
+            },
+            roshan: { 
+                key: document.getElementById('roshanKey').value,
+                durations: currentProConfig.tacticalHotkeys.roshan.durations
+            }
+        }
+    };
+    
+    ipcRenderer.send('update-pro-config', proConfig);
+    localStorage.setItem('neonblossom_pro_config', JSON.stringify(proConfig));
+}
+
+// Add event listeners for PRO features toggles
+document.getElementById('enableBurstCalc').addEventListener('change', sendProConfig);
+document.getElementById('enableTacticalOverlay').addEventListener('change', sendProConfig);
+document.getElementById('enableMicroAssistant').addEventListener('change', sendProConfig);
+
+// Apply hotkeys button
+document.getElementById('btnApplyHotkeys').addEventListener('click', () => {
+    sendProConfig();
+    // Visual feedback
+    const btn = document.getElementById('btnApplyHotkeys');
+    const originalText = btn.textContent;
+    btn.textContent = currentLang === 'ru' ? '✓ Применено' : '✓ Applied';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+    }, 1500);
 });
 
 document.getElementById('btnExit').addEventListener('click', () => ipcRenderer.send('close-app'));

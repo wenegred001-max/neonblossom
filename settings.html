@@ -24,6 +24,7 @@
             <div class="tab active" data-tab="visuals" data-i18n="tab_visuals">ВИЗУАЛЫ</div>
             <div class="tab" data-tab="config" data-i18n="tab_config">КОНФИГУРАЦИЯ</div>
             <div class="tab" data-tab="settings" data-i18n="tab_settings">НАСТРОЙКИ</div>
+            <div class="tab" data-tab="pro-features" data-i18n="tab_pro_features">PRO FEATURES</div>
         </div>
 
         <!-- TAB 1: VISUALS -->
@@ -176,6 +177,70 @@
                     <span data-i18n="chk_streamer_mode">Скрыть от OBS / Захвата</span>
                     <input type="checkbox" id="streamerMode">
                 </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: PRO FEATURES -->
+        <div class="tab-content grid-2" id="tab-pro-features">
+            <div class="panel">
+                <div class="panel-title">🎯 <span data-i18n="p_pro_features">PRO Функции</span></div>
+                
+                <div class="checkbox-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableBurstCalc" checked>
+                        <span data-i18n="pro_burst_calc">Smart Burst Calculator</span>
+                    </div>
+                    <span style="font-size:9px; color:#64748b;">Lion combo damage</span>
+                </div>
+
+                <div class="checkbox-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableTacticalOverlay" checked>
+                        <span data-i18n="pro_tactical_overlay">Tactical Overlay (Hotkeys)</span>
+                    </div>
+                    <span style="font-size:9px; color:#64748b;">Ctrl+Numpad 1/2/0</span>
+                </div>
+
+                <div class="checkbox-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableMicroAssistant" checked>
+                        <span data-i18n="pro_micro_assistant">Pro-Micro Efficiency</span>
+                    </div>
+                    <span style="font-size:9px; color:#64748b;">AGI Treads alert</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">⌨️ <span data-i18n="p_hotkey_config">Настройка Хоткеев</span></div>
+                
+                <div class="control-group">
+                    <label data-i18n="lbl_blackhole_key">Black Hole Timer:</label>
+                    <select id="blackHoleKey">
+                        <option value="Numpad1">Numpad 1</option>
+                        <option value="Numpad4">Numpad 4</option>
+                        <option value="Numpad7">Numpad 7</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label data-i18n="lbl_ravage_key">Ravage Timer:</label>
+                    <select id="ravageKey">
+                        <option value="Numpad2">Numpad 2</option>
+                        <option value="Numpad5">Numpad 5</option>
+                        <option value="Numpad8">Numpad 8</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label data-i18n="lbl_roshan_key">Roshan Timers:</label>
+                    <select id="roshanKey">
+                        <option value="Numpad0">Numpad 0</option>
+                        <option value="Numpad3">Numpad 3</option>
+                        <option value="Numpad6">Numpad 6</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="btnApplyHotkeys" style="margin-top:8px;" data-i18n="btn_apply_hotkeys">Применить Хоткеи</button>
             </div>
         </div>
 

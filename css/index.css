@@ -2,6 +2,15 @@
     --node-size: 20px;
     --border-color: #cbd5e1;
     --plat-glow: rgba(226, 232, 240, 0.4);
+    
+    /* PRO FEATURES COLORS */
+    --neon-purple: #a855f7;
+    --neon-red: #ef4444;
+    --neon-gold: #fbbf24;
+    --neon-green: #22c55e;
+    --neon-cyan: #06b6d4;
+    --glass-bg: rgba(15, 23, 42, 0.92);
+    --glass-border: rgba(226, 232, 240, 0.2);
 }
 
 html, body {
@@ -14,6 +23,9 @@ html, body {
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+/* ============================================================================
+   MINIMAP OVERLAY (Existing)
+   ============================================================================ */
 .minimap-overlay {
     position: absolute;
     bottom: 0;
@@ -83,3 +95,209 @@ html, body {
 #bounty-bot       { top: 77%; left: 53%; }
 #river-top        { top: 44%; left: 41%; }
 #river-bot        { top: 57%; left: 57%; }
+
+/* ============================================================================
+   PRO WIDGETS - GLASSMORPHISM DESIGN
+   ============================================================================ */
+.pro-widget {
+    position: absolute;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(226, 232, 240, 0.05);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: #e2e8f0;
+}
+
+.pro-widget.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* BURST CALCULATOR WIDGET */
+.burst-calculator {
+    top: 100px;
+    right: 100px;
+    min-width: 220px;
+}
+
+.burst-calculator .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.burst-calculator .widget-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: var(--neon-purple);
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+.burst-calculator .hero-icon {
+    font-size: 18px;
+}
+
+.burst-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.burst-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+}
+
+.ability-name {
+    color: #94a3b8;
+}
+
+.ability-dmg {
+    color: var(--neon-gold);
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.burst-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--glass-border);
+    font-size: 11px;
+}
+
+.burst-total span:first-child {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.burst-value {
+    color: var(--neon-red);
+    font-weight: 800;
+    font-size: 14px;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+/* TACTICAL OVERLAY TIMERS */
+.tactical-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.tactical-timer {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-left: 4px solid;
+    border-radius: 8px;
+    padding: 10px 16px;
+    min-width: 180px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tactical-timer.fade-out {
+    animation: fadeOut 0.5s ease-in forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.tactical-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #e2e8f0;
+}
+
+.tactical-time {
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+/* MICRO ASSISTANT WIDGET */
+.micro-assistant {
+    bottom: 150px;
+    right: 100px;
+}
+
+.micro-alert {
+    display: none;
+    align-items: center;
+    gap: 10px;
+}
+
+.micro-alert.active {
+    display: flex;
+    animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+    }
+    to {
+        box-shadow: 0 0 25px rgba(6, 182, 212, 0.8);
+    }
+}
+
+.alert-icon {
+    font-size: 24px;
+    animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-3px); }
+}
+
+.alert-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+    letter-spacing: 0.5px;
+}
