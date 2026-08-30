@@ -8,6 +8,8 @@ let settingsWindow = null;
 let currentHotkey = 'Alt';
 let gsiTimeout = null;
 let isGsiConnected = false;
+let isEditMode = false;
+
 let proFeaturesConfig = {
     burstCalculator: true,
     tacticalOverlay: true,
@@ -18,8 +20,10 @@ let proFeaturesConfig = {
         roshan: { key: 'Numpad0', durations: { aegis: 300, minSpawn: 480, maxSpawn: 660 } }
     }
 };
+
 let activeTimers = [];
 let gsiData = {};
+let widgetPositions = {};
 
 // ============================================================================
 // GSI СЕРВЕР - Парсинг данных Dota 2
@@ -99,7 +103,7 @@ function createOverlayWindow() {
     });
 
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
-    mainWindow.setIgnoreMouseEvents(true);
+    mainWindow.setIgnoreMouseEvents(!isEditMode);
     mainWindow.setBounds({ x: 0, y: 0, width: width, height: height });
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
@@ -125,6 +129,7 @@ function createSettingsWindow() {
     settingsWindow.webContents.on('did-finish-load', () => {
         settingsWindow.webContents.send('gsi-status', isGsiConnected);
         settingsWindow.webContents.send('pro-config', proFeaturesConfig);
+        settingsWindow.webContents.send('widget-positions', widgetPositions);
     });
 
     settingsWindow.on('blur', () => {
@@ -150,6 +155,15 @@ function isMatchingKey(keycode, hotkeyType) {
     return false;
 }
 
+function getTacticalKeyCode(keyName) {
+    const keyMap = {
+        'Numpad1': UiohookKey.Numpad1, 'Numpad2': UiohookKey.Numpad2, 'Numpad0': UiohookKey.Numpad0,
+        'Numpad3': UiohookKey.Numpad3, 'Numpad4': UiohookKey.Numpad4, 'Numpad5': UiohookKey.Numpad5,
+        'Numpad6': UiohookKey.Numpad6, 'Numpad7': UiohookKey.Numpad7, 'Numpad8': UiohookKey.Numpad8
+    };
+    return keyMap[keyName] || null;
+}
+
 let isCtrlPressed = false;
 
 uIOhook.on('keydown', (e) => {
@@ -166,13 +180,17 @@ uIOhook.on('keydown', (e) => {
         isCtrlPressed = true;
     }
     
-    // Tactical Hotkeys (Ctrl + Numpad)
+    // Tactical Hotkeys (Ctrl + Configurable Numpad)
     if (isCtrlPressed && proFeaturesConfig.tacticalOverlay) {
-        if (e.keycode === UiohookKey.Numpad1) {
+        const bhKey = getTacticalKeyCode(proFeaturesConfig.tacticalHotkeys.blackHole.key);
+        const ravKey = getTacticalKeyCode(proFeaturesConfig.tacticalHotkeys.ravage.key);
+        const roshKey = getTacticalKeyCode(proFeaturesConfig.tacticalHotkeys.roshan.key);
+        
+        if (bhKey && e.keycode === bhKey) {
             triggerTacticalWidget('blackHole');
-        } else if (e.keycode === UiohookKey.Numpad2) {
+        } else if (ravKey && e.keycode === ravKey) {
             triggerTacticalWidget('ravage');
-        } else if (e.keycode === UiohookKey.Numpad0) {
+        } else if (roshKey && e.keycode === roshKey) {
             triggerTacticalWidget('roshan');
         }
     }
@@ -254,6 +272,28 @@ ipcMain.on('update-pro-config', (event, config) => {
     if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('apply-pro-config', proFeaturesConfig);
     }
+});
+
+// ============================================================================
+// EDIT MODE - DRAGGABLE WIDGETS
+// ============================================================================
+ipcMain.on('toggle-edit-mode', (event, enabled) => {
+    isEditMode = enabled;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.setIgnoreMouseEvents(!enabled);
+        mainWindow.webContents.send('edit-mode-toggled', enabled);
+    }
+});
+
+ipcMain.on('save-widget-position', (event, data) => {
+    widgetPositions[data.widgetId] = { x: data.x, y: data.y, width: data.width, height: data.height };
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+        settingsWindow.webContents.send('widget-positions-updated', widgetPositions);
+    }
+});
+
+ipcMain.on('load-widget-positions', (event) => {
+    event.sender.send('widget-positions', widgetPositions);
 });
 
 ipcMain.on('close-app', () => {

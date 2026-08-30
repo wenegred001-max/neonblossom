@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Neonblossom Dota 2 PRO Overlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Tektur:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
@@ -22,22 +25,22 @@
     </div>
 
     <!-- SMART BURST CALCULATOR WIDGET -->
-    <div class="pro-widget burst-calculator" id="burstWidget">
+    <div class="pro-widget burst-calculator draggable-widget" id="burstWidget" data-widget-id="burstCalculator">
         <div class="widget-header">
-            <span class="widget-title">BURST CALCULATOR</span>
+            <span class="widget-title" data-i18n="burst_title">BURST CALCULATOR</span>
             <span class="hero-icon" id="burstHeroIcon">🦁</span>
         </div>
         <div class="burst-content">
             <div class="burst-row">
-                <span class="ability-name">Finger of Death</span>
+                <span class="ability-name" data-i18n="finger_name">Finger of Death</span>
                 <span class="ability-dmg" id="fingerDmg">400</span>
             </div>
             <div class="burst-row">
-                <span class="ability-name">Earth Spike</span>
+                <span class="ability-name" data-i18n="spike_name">Earth Spike</span>
                 <span class="ability-dmg" id="spikeDmg">130</span>
             </div>
             <div class="burst-total">
-                <span>LETHAL BURST:</span>
+                <span data-i18n="lethal_burst">LETHAL BURST:</span>
                 <span class="burst-value" id="lethalBurst">530 HP</span>
             </div>
         </div>
@@ -47,11 +50,16 @@
     <div class="tactical-overlay" id="tacticalOverlay"></div>
 
     <!-- MICRO ASSISTANT WIDGET -->
-    <div class="pro-widget micro-assistant" id="microWidget">
+    <div class="pro-widget micro-assistant draggable-widget" id="microWidget" data-widget-id="microAssistant">
         <div class="micro-alert" id="microAlert">
             <div class="alert-icon">⚡</div>
-            <div class="alert-text">AGI TREADS!</div>
+            <div class="alert-text" data-i18n="agi_treads">AGI TREADS!</div>
         </div>
+    </div>
+
+    <!-- EDIT MODE INDICATOR -->
+    <div class="edit-mode-indicator" id="editModeIndicator" style="display:none;">
+        <span data-i18n="edit_mode">EDIT MODE</span>
     </div>
 
     <script src="js/index.js"></script>
