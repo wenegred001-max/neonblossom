@@ -1,5 +1,8 @@
 const { ipcRenderer } = require('electron');
 
+// ============================================================================
+// i18n LOCALIZATION DICTIONARY
+// ============================================================================
 const translations = {
     ru: {
         tab_visuals: "ВИЗУАЛЫ",
@@ -43,8 +46,14 @@ const translations = {
         chk_streamer_mode: "Скрыть от OBS / Захвата",
         p_pro_features: "PRO Функции",
         pro_burst_calc: "Smart Burst Calculator",
+        pro_burst_desc: "Lion combo damage",
         pro_tactical_overlay: "Tactical Overlay (Hotkeys)",
+        pro_tactical_desc: "Ctrl+Numpad 1/2/0",
         pro_micro_assistant: "Pro-Micro Efficiency",
+        pro_micro_desc: "AGI Treads alert",
+        p_edit_interface: "Редактор Интерфейса",
+        btn_edit_interface: "✏️ Редактировать интерфейс",
+        edit_mode_desc: "Перетаскивайте виджеты мышкой. Нажмите ещё раз для выхода.",
         p_hotkey_config: "Настройка Хоткеев",
         lbl_blackhole_key: "Black Hole Timer:",
         lbl_ravage_key: "Ravage Timer:",
@@ -55,48 +64,54 @@ const translations = {
     },
     en: {
         tab_visuals: "VISUALS",
-        tab_config: "CONFIG",
+        tab_config: "CONFIGURATION",
         tab_settings: "SETTINGS",
         tab_pro_features: "PRO FEATURES",
         p_map_title: "Minimap",
         lbl_map_pos: "Minimap Position:",
-        opt_left: "Left (Default)",
+        opt_left: "Left (Standard)",
         opt_right: "Right",
         lbl_map_size: "Map Size",
         lbl_icon_scale: "Icon Scale",
         p_style_title: "Appearance",
         lbl_opacity: "Opacity",
         chk_border: "Map Border",
-        chk_alt_only: "Show on Hotkey Only",
-        chk_icons: "Icons Inside Timer",
-        p_runes_title: "Rune Filters",
+        chk_alt_only: "Only by Hotkey",
+        chk_icons: "Icons inside timer",
+        p_runes_title: "Rune Filter",
         rune_wisdom: "Wisdom Runes",
         rune_lotus: "Lotus Runes",
         rune_bounty: "Bounty Runes",
         rune_water: "Water Runes",
         rune_active: "Active Runes",
-        p_profiles_title: "Configuration Profiles",
+        p_profiles_title: "Settings Profiles",
         lbl_select_profile: "Select Profile:",
         lbl_profile_name: "New Profile Name:",
-        btn_save_profile: "Save Profile",
+        btn_save_profile: "Save",
         btn_delete_profile: "Delete",
         p_import_export: "Import / Export",
-        desc_config_json: "Export your settings to JSON string or import an external configuration file.",
+        desc_config_json: "Export your settings to JSON string or import a ready config.",
         btn_export_json: "Export to JSON",
         btn_import_json: "Import from JSON",
-        p_app_settings: "App Settings",
+        p_app_settings: "Application Settings",
         lbl_language: "Interface Language:",
-        lbl_hotkey: "Overlay Hotkey:",
-        chk_autostart: "Launch on Windows Startup",
-        chk_tray: "Start Minimized to Tray",
-        p_audio_stream: "Audio & Streamer",
-        chk_sound_alerts: "Sound Alert 10s Before Spawn",
+        lbl_hotkey: "Display Hotkey:",
+        chk_autostart: "Autostart on Windows boot",
+        chk_tray: "Start minimized to tray",
+        p_audio_stream: "Sounds & Capture",
+        chk_sound_alerts: "Sound alert at 10 sec",
         lbl_volume: "Alert Volume",
         chk_streamer_mode: "Hide from OBS / Capture",
         p_pro_features: "PRO Features",
         pro_burst_calc: "Smart Burst Calculator",
+        pro_burst_desc: "Lion combo damage",
         pro_tactical_overlay: "Tactical Overlay (Hotkeys)",
+        pro_tactical_desc: "Ctrl+Numpad 1/2/0",
         pro_micro_assistant: "Pro-Micro Efficiency",
+        pro_micro_desc: "AGI Treads alert",
+        p_edit_interface: "Interface Editor",
+        btn_edit_interface: "✏️ Edit Interface",
+        edit_mode_desc: "Drag widgets with mouse. Click again to exit.",
         p_hotkey_config: "Hotkey Configuration",
         lbl_blackhole_key: "Black Hole Timer:",
         lbl_ravage_key: "Ravage Timer:",
@@ -108,127 +123,6 @@ const translations = {
 };
 
 let currentLang = 'ru';
-
-function setLanguage(lang) {
-    currentLang = lang;
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-            el.innerText = translations[lang][key];
-        }
-    });
-}
-
-// Tab Switcher
-document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
-        tab.classList.add('active');
-        const target = tab.getAttribute('data-tab');
-        document.getElementById(`tab-${target}`).classList.add('active-content');
-    });
-});
-
-// Dynamic GSI Status Handler
-ipcRenderer.on('gsi-status', (event, connected) => {
-    const dot = document.getElementById('gsiDot');
-    const status = document.getElementById('gsiStatus');
-    if (connected) {
-        dot.classList.add('active');
-        status.innerText = 'Connected';
-        status.style.color = '#22c55e';
-    } else {
-        dot.classList.remove('active');
-        status.innerText = 'Disconnected';
-        status.style.color = '#94a3b8';
-    }
-});
-
-function getCurrentConfig() {
-    return {
-        lang: document.getElementById('appLanguage').value,
-        position: document.getElementById('mapPosition').value,
-        size: document.getElementById('size').value,
-        iconScale: document.getElementById('iconScale').value,
-        opacity: document.getElementById('opacity').value / 100,
-        showBorder: document.getElementById('showBorder').checked,
-        borderColor: document.getElementById('borderColor').value,
-        altOnly: document.getElementById('altOnly').checked,
-        showIcons: document.getElementById('showIcons').checked,
-        hotkey: document.getElementById('hotkeySelect').value,
-        autoStart: document.getElementById('autoStart').checked,
-        startInTray: document.getElementById('startInTray').checked,
-        soundAlerts: document.getElementById('soundAlerts').checked,
-        soundVolume: document.getElementById('soundVolume').value,
-        streamerMode: document.getElementById('streamerMode').checked,
-        enabledRunes: {
-            wisdom: document.getElementById('enableWisdom').checked,
-            lotus: document.getElementById('enableLotus').checked,
-            bounty: document.getElementById('enableBounty').checked,
-            water: document.getElementById('enableWater').checked,
-            active: document.getElementById('enableActive').checked,
-        },
-        colors: {
-            wisdom: document.getElementById('colorWisdom').value,
-            lotus: document.getElementById('colorLotus').value,
-            bounty: document.getElementById('colorBounty').value,
-            water: document.getElementById('colorWater').value,
-            active: document.getElementById('colorActive').value,
-        }
-    };
-}
-
-function updateLabels() {
-    document.getElementById('valSize').innerText = document.getElementById('size').value + 'px';
-    document.getElementById('valScale').innerText = document.getElementById('iconScale').value + 'px';
-    document.getElementById('valOp').innerText = document.getElementById('opacity').value + '%';
-    document.getElementById('valVol').innerText = document.getElementById('soundVolume').value + '%';
-}
-
-function sendConfig() {
-    updateLabels();
-    const config = getCurrentConfig();
-    ipcRenderer.send('update-config', config);
-    localStorage.setItem('neonblossom_config', JSON.stringify(config));
-}
-
-const allInputs = document.querySelectorAll('input, select');
-allInputs.forEach(el => {
-    el.addEventListener('input', sendConfig);
-    el.addEventListener('change', sendConfig);
-});
-
-document.getElementById('appLanguage').addEventListener('change', (e) => {
-    setLanguage(e.target.value);
-});
-
-document.getElementById('btnSaveProfile').addEventListener('click', () => {
-    const name = document.getElementById('newProfileName').value.trim();
-    if(!name) return;
-    const profiles = JSON.parse(localStorage.getItem('neon_profiles') || '{}');
-    profiles[name] = getCurrentConfig();
-    localStorage.setItem('neon_profiles', JSON.stringify(profiles));
-    
-    const opt = document.createElement('option');
-    opt.value = name;
-    opt.innerText = name;
-    document.getElementById('profileSelect').appendChild(opt);
-    document.getElementById('profileSelect').value = name;
-    document.getElementById('newProfileName').value = '';
-});
-
-document.getElementById('btnExportJson').addEventListener('click', () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getCurrentConfig(), null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "neonblossom_config.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-});
-
-// PRO FEATURES HANDLERS
 let currentProConfig = {
     burstCalculator: true,
     tacticalOverlay: true,
@@ -239,17 +133,101 @@ let currentProConfig = {
         roshan: { key: 'Numpad0', durations: { aegis: 300, minSpawn: 480, maxSpawn: 660 } }
     }
 };
+let isEditMode = false;
 
-// Receive PRO config from main process
+// ============================================================================
+// i18n FUNCTION - Apply translations to all elements with data-i18n attribute
+// ============================================================================
+function setLanguage(lang) {
+    currentLang = lang || 'ru';
+    localStorage.setItem('neonblossom_language', currentLang);
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang] && translations[currentLang][key]) {
+            // Handle different element types
+            if (el.tagName === 'OPTION') {
+                el.textContent = translations[currentLang][key];
+            } else if (el.tagName === 'INPUT' && el.type !== 'checkbox') {
+                el.placeholder = translations[currentLang][key];
+            } else {
+                el.innerText = translations[currentLang][key];
+            }
+        }
+    });
+}
+
+// ============================================================================
+// TAB SWITCHING
+// ============================================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
+        
+        tab.classList.add('active');
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(`tab-${tabId}`).classList.add('active-content');
+    });
+});
+
+// ============================================================================
+// EDIT MODE TOGGLE - DRAGGABLE WIDGETS
+// ============================================================================
+document.getElementById('btnEditMode').addEventListener('click', () => {
+    isEditMode = !isEditMode;
+    const btn = document.getElementById('btnEditMode');
+    
+    if (isEditMode) {
+        btn.innerHTML = currentLang === 'ru' ? '✅ Выйти из режима' : '✅ Exit Edit Mode';
+        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    } else {
+        btn.innerHTML = currentLang === 'ru' ? '✏️ Редактировать интерфейс' : '✏️ Edit Interface';
+        btn.style.background = '';
+    }
+    
+    // Send IPC to main process to toggle mouse events
+    ipcRenderer.send('toggle-edit-mode', isEditMode);
+});
+
+// Listen for edit mode confirmation from main process
+ipcRenderer.on('edit-mode-toggled', (event, enabled) => {
+    console.log('Edit mode toggled:', enabled);
+});
+
+// ============================================================================
+// GSI STATUS LISTENER
+// ============================================================================
+ipcRenderer.on('gsi-status', (event, status) => {
+    const dot = document.getElementById('gsiDot');
+    const txt = document.getElementById('gsiStatus');
+    
+    if (status) {
+        dot.classList.add('active');
+        txt.textContent = currentLang === 'ru' ? 'Подключено' : 'Connected';
+        txt.style.color = '#22c55e';
+    } else {
+        dot.classList.remove('active');
+        txt.textContent = currentLang === 'ru' ? 'Отключено' : 'Disconnected';
+        txt.style.color = '#64748b';
+    }
+});
+
+// ============================================================================
+// PRO CONFIG HANDLING
+// ============================================================================
 ipcRenderer.on('pro-config', (event, config) => {
     currentProConfig = config;
-    // Update UI with current config
     document.getElementById('enableBurstCalc').checked = config.burstCalculator;
     document.getElementById('enableTacticalOverlay').checked = config.tacticalOverlay;
     document.getElementById('enableMicroAssistant').checked = config.microAssistant;
+    
+    // Set hotkey selects
+    document.getElementById('blackHoleKey').value = config.tacticalHotkeys.blackHole.key;
+    document.getElementById('ravageKey').value = config.tacticalHotkeys.ravage.key;
+    document.getElementById('roshanKey').value = config.tacticalHotkeys.roshan.key;
 });
 
-// Send PRO config to main process
 function sendProConfig() {
     const proConfig = {
         burstCalculator: document.getElementById('enableBurstCalc').checked,
@@ -275,7 +253,7 @@ function sendProConfig() {
     localStorage.setItem('neonblossom_pro_config', JSON.stringify(proConfig));
 }
 
-// Add event listeners for PRO features toggles
+// Event listeners for PRO features
 document.getElementById('enableBurstCalc').addEventListener('change', sendProConfig);
 document.getElementById('enableTacticalOverlay').addEventListener('change', sendProConfig);
 document.getElementById('enableMicroAssistant').addEventListener('change', sendProConfig);
@@ -283,7 +261,6 @@ document.getElementById('enableMicroAssistant').addEventListener('change', sendP
 // Apply hotkeys button
 document.getElementById('btnApplyHotkeys').addEventListener('click', () => {
     sendProConfig();
-    // Visual feedback
     const btn = document.getElementById('btnApplyHotkeys');
     const originalText = btn.textContent;
     btn.textContent = currentLang === 'ru' ? '✓ Применено' : '✓ Applied';
@@ -294,8 +271,81 @@ document.getElementById('btnApplyHotkeys').addEventListener('click', () => {
     }, 1500);
 });
 
-document.getElementById('btnExit').addEventListener('click', () => ipcRenderer.send('close-app'));
-document.getElementById('btnApply').addEventListener('click', sendConfig);
+// ============================================================================
+// CONFIG SENDING
+// ============================================================================
+function sendConfig() {
+    const config = {
+        size: parseInt(document.getElementById('size').value),
+        iconScale: parseInt(document.getElementById('iconScale').value),
+        opacity: parseInt(document.getElementById('opacity').value) / 100,
+        position: document.getElementById('mapPosition').value,
+        showBorder: document.getElementById('showBorder').checked,
+        borderColor: document.getElementById('borderColor').value,
+        altOnly: document.getElementById('altOnly').checked,
+        showIcons: document.getElementById('showIcons').checked,
+        enabledRunes: {
+            wisdom: document.getElementById('enableWisdom').checked,
+            lotus: document.getElementById('enableLotus').checked,
+            bounty: document.getElementById('enableBounty').checked,
+            water: document.getElementById('enableWater').checked,
+            active: document.getElementById('enableActive').checked
+        },
+        colors: {
+            wisdom: document.getElementById('colorWisdom').value,
+            lotus: document.getElementById('colorLotus').value,
+            bounty: document.getElementById('colorBounty').value,
+            water: document.getElementById('colorWater').value,
+            active: document.getElementById('colorActive').value
+        },
+        hotkey: document.getElementById('hotkeySelect').value,
+        streamerMode: document.getElementById('streamerMode').checked,
+        soundAlerts: document.getElementById('soundAlerts').checked,
+        soundVolume: parseInt(document.getElementById('soundVolume').value) / 100
+    };
+    
+    ipcRenderer.send('update-config', config);
+    localStorage.setItem('neonblossom_config', JSON.stringify(config));
+}
 
+// Value displays
+['size', 'iconScale', 'opacity', 'soundVolume'].forEach(id => {
+    const el = document.getElementById(id);
+    const valEl = document.getElementById(id === 'size' ? 'valSize' : 
+                                          id === 'iconScale' ? 'valScale' : 
+                                          id === 'opacity' ? 'valOp' : 'valVol');
+    el.addEventListener('input', () => {
+        valEl.textContent = id === 'opacity' || id === 'soundVolume' 
+            ? el.value + '%' 
+            : el.value + 'px';
+    });
+});
+
+// Apply button
+document.getElementById('btnApply').addEventListener('click', () => {
+    sendConfig();
+    sendProConfig();
+    
+    const btn = document.getElementById('btnApply');
+    const originalText = btn.textContent;
+    btn.textContent = currentLang === 'ru' ? '✓ Применено' : '✓ Applied';
+    btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+    }, 1500);
+});
+
+// Exit button
+document.getElementById('btnExit').addEventListener('click', () => {
+    ipcRenderer.send('close-app');
+});
+
+// Language selector
+document.getElementById('appLanguage').addEventListener('change', (e) => {
+    setLanguage(e.target.value);
+});
+
+// Initialize
 setLanguage('ru');
 sendConfig();

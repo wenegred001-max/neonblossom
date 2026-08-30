@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Neonblossom Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Tektur:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/settings.css">
 </head>
 <body>
@@ -190,7 +193,7 @@
                         <input type="checkbox" id="enableBurstCalc" checked>
                         <span data-i18n="pro_burst_calc">Smart Burst Calculator</span>
                     </div>
-                    <span style="font-size:9px; color:#64748b;">Lion combo damage</span>
+                    <span style="font-size:9px; color:#64748b;" data-i18n="pro_burst_desc">Lion combo damage</span>
                 </div>
 
                 <div class="checkbox-row">
@@ -198,7 +201,7 @@
                         <input type="checkbox" id="enableTacticalOverlay" checked>
                         <span data-i18n="pro_tactical_overlay">Tactical Overlay (Hotkeys)</span>
                     </div>
-                    <span style="font-size:9px; color:#64748b;">Ctrl+Numpad 1/2/0</span>
+                    <span style="font-size:9px; color:#64748b;" data-i18n="pro_tactical_desc">Ctrl+Numpad 1/2/0</span>
                 </div>
 
                 <div class="checkbox-row">
@@ -206,7 +209,18 @@
                         <input type="checkbox" id="enableMicroAssistant" checked>
                         <span data-i18n="pro_micro_assistant">Pro-Micro Efficiency</span>
                     </div>
-                    <span style="font-size:9px; color:#64748b;">AGI Treads alert</span>
+                    <span style="font-size:9px; color:#64748b;" data-i18n="pro_micro_desc">AGI Treads alert</span>
+                </div>
+
+                <!-- EDIT MODE BUTTON -->
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(226, 232, 240, 0.15);">
+                    <div class="panel-title" style="margin-bottom: 12px;">🖱️ <span data-i18n="p_edit_interface">Редактор Интерфейса</span></div>
+                    <button class="btn btn-primary" id="btnEditMode" data-i18n="btn_edit_interface" style="width: 100%; padding: 10px;">
+                        ✏️ Редактировать интерфейс
+                    </button>
+                    <p style="font-size: 9px; color: #64748b; margin-top: 6px;" data-i18n="edit_mode_desc">
+                        Перетаскивайте виджеты мышкой. Нажмите ещё раз для выхода.
+                    </p>
                 </div>
             </div>
 
@@ -257,7 +271,7 @@
                     <span>GSI:</span> <span class="status-val" id="gsiStatus">Disconnected</span>
                 </div>
                 <div class="status-item">
-                    <span>Ver:</span> <span class="status-val">v1.0.0 Platinum</span>
+                    <span>Ver:</span> <span class="status-val">v2.0.0 Platinum PRO</span>
                 </div>
             </div>
         </div>
