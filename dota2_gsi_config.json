@@ -1,0 +1,27 @@
+{
+    "uri": "http://127.0.0.1:3000/",
+    "timeout": "5.0",
+    "throttle": "0.1",
+    "heartbeat": "30.0",
+    "data": {
+        "provider": true,
+        "map": true,
+        "roshan": true,
+        "player": {
+            "abilities": true,
+            "items": true,
+            "position": true,
+            "net_worth": true,
+            "gpm": true,
+            "xp": true,
+            "level": true,
+            "hero_state": true,
+            "lifestate": true
+        },
+        "abilities": true,
+        "items": true,
+        "heroes": true,
+        "buildings": true,
+        "combat": true
+    }
+}

@@ -83,3 +83,280 @@ html, body {
 #bounty-bot       { top: 77%; left: 53%; }
 #river-top        { top: 44%; left: 41%; }
 #river-bot        { top: 57%; left: 57%; }
+
+/* Aegis Tracker */
+.aegis-tracker {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 2px solid #fbbf24;
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.aegis-tracker.visible {
+    opacity: 1;
+}
+
+.aegis-icon {
+    font-size: 28px;
+    animation: aegisGlow 2s infinite alternate;
+}
+
+@keyframes aegisGlow {
+    from { filter: drop-shadow(0 0 4px #fbbf24); }
+    to { filter: drop-shadow(0 0 12px #fbbf24); }
+}
+
+.aegis-timer {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fbbf24;
+    min-width: 60px;
+    text-align: center;
+}
+
+.aegis-warning {
+    font-size: 11px;
+    color: #ef4444;
+    font-weight: 700;
+    text-transform: uppercase;
+    animation: warningBlink 0.5s infinite;
+    display: none;
+}
+
+.aegis-warning.show {
+    display: block;
+}
+
+@keyframes warningBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Notifications Panel */
+.notifications-panel {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+    pointer-events: none;
+}
+
+.notification-item {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(226, 232, 240, 0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.notification-item.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    to { transform: translateX(20px); opacity: 0; }
+}
+
+.notif-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.notif-icon.item { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.notif-icon.ward { background: linear-gradient(135deg, #10b981, #059669); }
+.notif-icon.ability { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.notif-icon.roshan { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.notif-icon.aegis { background: linear-gradient(135deg, #fbbf24, #d97706); }
+
+.notif-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notif-time {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* Enemy Trackers */
+.enemy-trackers {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.enemy-hero {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid #ef4444;
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.enemy-hero img {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.enemy-hero .last-seen {
+    color: #f87171;
+    font-weight: 600;
+}
+
+/* Abilities Tracker */
+.abilities-tracker {
+    position: absolute;
+    bottom: 320px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.ability-item {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: #e2e8f0;
+}
+
+.ability-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.ability-name {
+    font-weight: 600;
+    min-width: 120px;
+}
+
+.ability-cd {
+    color: #f87171;
+    font-weight: 800;
+    margin-left: auto;
+}
+
+/* Player Stats */
+.player-stats {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(226, 232, 240, 0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 20px;
+    pointer-events: none;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #22c55e;
+}
+
+/* Roshan Timer */
+.roshan-timer {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 2px solid #ef4444;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.roshan-timer.visible {
+    opacity: 1;
+}
+
+.roshan-icon {
+    font-size: 24px;
+}
+
+.roshan-text {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ef4444;
+    min-width: 50px;
+}
