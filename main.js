@@ -1,6 +1,7 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, screen, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
 const http = require('http');
+const fs = require('fs');
 const { uIOhook, UiohookKey } = require('uiohook-napi');
 
 let mainWindow = null;
@@ -8,6 +9,17 @@ let settingsWindow = null;
 let currentHotkey = 'Alt';
 let gsiTimeout = null;
 let isGsiConnected = false;
+let tray = null;
+
+// Полные данные GSI
+let currentGsiData = null;
+let previousGsiData = null;
+
+// Таймеры и состояния
+let aegisTimer = null;
+let aegisEndTime = null;
+let aegisWarningShown = false;
+let roshanDeathTime = null;
 
 // Встроенный HTTP-сервер для приемки данных GSI от Dota 2
 const gsiServer = http.createServer((req, res) => {
@@ -17,11 +29,18 @@ const gsiServer = http.createServer((req, res) => {
         req.on('end', () => {
             try {
                 const data = JSON.parse(body);
+                previousGsiData = currentGsiData;
+                currentGsiData = data;
+                
                 if (data && data.map && typeof data.map.clock_time !== 'undefined') {
                     resetGsiTimeout();
                     if (mainWindow && !mainWindow.isDestroyed()) {
+                        mainWindow.webContents.send('gsi-data', data);
                         mainWindow.webContents.send('gsi-clock', data.map.clock_time);
                     }
+                    
+                    // Обработка событий GSI
+                    processGsiEvents(data, previousGsiData);
                 }
             } catch (e) {
                 console.error('GSI Parse Error:', e);
@@ -38,6 +57,141 @@ const gsiServer = http.createServer((req, res) => {
 gsiServer.listen(3000, '127.0.0.1', () => {
     console.log('GSI Server running on port 3000');
 });
+
+function processGsiEvents(current, previous) {
+    if (!current || !previous) return;
+    
+    const clockTime = current.map?.clock_time || 0;
+    
+    // Отслеживание смерти Рошана
+    if (current.roshan && previous.roshan) {
+        if (current.roshan.event && !previous.roshan.event) {
+            // Рошан умер
+            roshanDeathTime = clockTime;
+            startAegisTracker(clockTime);
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send('roshan-death', { time: clockTime });
+            }
+        }
+    }
+    
+    // Отслеживание покупок предметов врагами
+    if (current.player && previous.player && current.player.observer_value !== previous.player.observer_value) {
+        // Изменение золота - возможна покупка
+        checkItemPurchases(current, previous);
+    }
+    
+    // Отслеживание вардов
+    trackWards(current, previous);
+    
+    // Отслеживание способностей
+    trackAbilities(current, previous);
+}
+
+function startAegisTimer(startTime) {
+    if (aegisTimer) clearTimeout(aegisTimer);
+    
+    aegisEndTime = startTime + 300; // 5 минут
+    aegisWarningShown = false;
+    
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('aegis-start', { endTime: aegisEndTime });
+    }
+    
+    // Предупреждение за 30 секунд
+    const warningTime = (aegisEndTime - 30) * 1000;
+    const now = Date.now();
+    const delay = Math.max(0, warningTime - now);
+    
+    aegisTimer = setTimeout(() => {
+        if (!aegisWarningShown && mainWindow && !mainWindow.isDestroyed()) {
+            aegisWarningShown = true;
+            mainWindow.webContents.send('aegis-warning', {});
+        }
+    }, delay);
+    
+    // Окончание таймера
+    const expireTime = aegisEndTime * 1000;
+    const expireDelay = Math.max(0, expireTime - now);
+    
+    setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('aegis-expired', {});
+        }
+    }, expireDelay);
+}
+
+function checkItemPurchases(current, previous) {
+    // Анализ изменений в предметах
+    const currentPlayer = current.player;
+    const prevPlayer = previous.player;
+    
+    if (!currentPlayer || !prevPlayer) return;
+    
+    const currentItems = new Set(currentPlayer.items?.map(i => i.name) || []);
+    const prevItems = new Set(prevPlayer.items?.map(i => i.name) || []);
+    
+    // Новые предметы
+    for (let item of currentItems) {
+        if (!prevItems.has(item) && item) {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send('item-purchased', { 
+                    itemName: item, 
+                    timestamp: current.map?.clock_time 
+                });
+            }
+        }
+    }
+}
+
+function trackWards(current, previous) {
+    const currentPlayer = current.player;
+    const prevPlayer = previous.player;
+    
+    if (!currentPlayer || !prevPlayer) return;
+    
+    // Подсчет вардов в инвентаре
+    const countWards = (items) => {
+        if (!items) return 0;
+        return items.filter(i => i.name && (i.name.includes('ward') || i.name.includes('observer') || i.name.includes('sentry'))).length;
+    };
+    
+    const currentWards = countWards(currentPlayer.items);
+    const prevWards = countWards(prevPlayer.items);
+    
+    if (currentWards < prevWards && mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('ward-placed', { 
+            count: prevWards - currentWards,
+            timestamp: current.map?.clock_time 
+        });
+    }
+}
+
+function trackAbilities(current, previous) {
+    const currentPlayer = current.player;
+    const prevPlayer = previous.player;
+    
+    if (!currentPlayer || !prevPlayer) return;
+    
+    // Отслеживание использования способностей через cooldown
+    const currentAbils = currentPlayer.abilities || [];
+    const prevAbils = prevPlayer.abilities || [];
+    
+    for (let i = 0; i < currentAbils.length; i++) {
+        const curr = currentAbils[i];
+        const prev = prevAbils[i];
+        
+        if (curr && prev && curr.cooldown !== prev.cooldown && curr.cooldown > 0) {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send('ability-used', {
+                    abilityName: curr.name,
+                    cooldown: curr.cooldown,
+                    timestamp: current.map?.clock_time
+                });
+            }
+        }
+    }
+}
 
 function notifyGsiStatus(status) {
     if (isGsiConnected !== status) {
