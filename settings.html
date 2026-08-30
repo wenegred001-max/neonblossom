@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Neonblossom Settings</title>
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+    <div class="app-window">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <div class="brand-logo"></div>
+                <div class="title">NEONBLOSSOM <span>DOTA 2</span></div>
+            </div>
+            <div class="win-controls">
+                <div class="win-btn" id="btnExit">✕</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="visuals" data-i18n="tab_visuals">ВИЗУАЛЫ</div>
+            <div class="tab" data-tab="config" data-i18n="tab_config">КОНФИГУРАЦИЯ</div>
+            <div class="tab" data-tab="settings" data-i18n="tab_settings">НАСТРОЙКИ</div>
+        </div>
+
+        <!-- TAB 1: VISUALS -->
+        <div class="tab-content grid-3 active-content" id="tab-visuals">
+            <div class="panel">
+                <div class="panel-title">🗺️ <span data-i18n="p_map_title">Миникарта</span></div>
+                <div class="control-group">
+                    <label data-i18n="lbl_map_pos">Позиция миникарты:</label>
+                    <select id="mapPosition">
+                        <option value="left" data-i18n="opt_left">Слева (Стандарт)</option>
+                        <option value="right" data-i18n="opt_right">Справа</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label><span data-i18n="lbl_map_size">Размер карты</span> <span class="val" id="valSize">280px</span></label>
+                    <input type="range" id="size" min="180" max="450" value="280">
+                </div>
+                <div class="control-group">
+                    <label><span data-i18n="lbl_icon_scale">Размер иконок</span> <span class="val" id="valScale">20px</span></label>
+                    <input type="range" id="iconScale" min="10" max="45" value="20">
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">✨ <span data-i18n="p_style_title">Оформление</span></div>
+                <div class="control-group">
+                    <label><span data-i18n="lbl_opacity">Прозрачность</span> <span class="val" id="valOp">70%</span></label>
+                    <input type="range" id="opacity" min="10" max="100" value="70">
+                </div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showBorder" checked>
+                        <span data-i18n="chk_border">Рамка карты</span>
+                    </div>
+                    <input type="color" id="borderColor" value="#cbd5e1">
+                </div>
+                <div class="checkbox-row">
+                    <span data-i18n="chk_alt_only">Только по клавише (Alt)</span>
+                    <input type="checkbox" id="altOnly" checked>
+                </div>
+                <div class="checkbox-row">
+                    <span data-i18n="chk_icons">Иконки внутри таймера</span>
+                    <input type="checkbox" id="showIcons" checked>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">🔮 <span data-i18n="p_runes_title">Фильтр Рун</span></div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group"><input type="checkbox" id="enableWisdom" checked><span data-i18n="rune_wisdom">Виздомки</span></div>
+                    <input type="color" id="colorWisdom" value="#a855f7">
+                </div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group"><input type="checkbox" id="enableLotus" checked><span data-i18n="rune_lotus">Лотусы</span></div>
+                    <input type="color" id="colorLotus" value="#ff66cc">
+                </div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group"><input type="checkbox" id="enableBounty" checked><span data-i18n="rune_bounty">Баунти</span></div>
+                    <input type="color" id="colorBounty" value="#ff9900">
+                </div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group"><input type="checkbox" id="enableWater" checked><span data-i18n="rune_water">Водные</span></div>
+                    <input type="color" id="colorWater" value="#00d2ff">
+                </div>
+                <div class="checkbox-row">
+                    <div class="checkbox-group"><input type="checkbox" id="enableActive" checked><span data-i18n="rune_active">Активные</span></div>
+                    <input type="color" id="colorActive" value="#cbd5e1">
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CONFIG -->
+        <div class="tab-content grid-2" id="tab-config">
+            <div class="panel">
+                <div class="panel-title">📁 <span data-i18n="p_profiles_title">Профили Настроек</span></div>
+                <div class="control-group">
+                    <label data-i18n="lbl_select_profile">Выберите профиль:</label>
+                    <select id="profileSelect">
+                        <option value="default">Platinum Default</option>
+                        <option value="minimal">Minimalist ESP</option>
+                        <option value="streamer">Streamer Mode</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label data-i18n="lbl_profile_name">Имя нового профиля:</label>
+                    <input type="text" id="newProfileName" placeholder="My Custom Profile">
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                    <button class="btn btn-primary" id="btnSaveProfile" style="flex:1;" data-i18n="btn_save_profile">Сохранить</button>
+                    <button class="btn" id="btnDeleteProfile" data-i18n="btn_delete_profile">Удалить</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">🔄 <span data-i18n="p_import_export">Импорт / Экспорт</span></div>
+                <p style="font-size:10px; color:#94a3b8; margin:0;" data-i18n="desc_config_json">Вы можете экспортировать свои настройки в JSON строку или импортировать готовый конфиг.</p>
+                <button class="btn" id="btnExportJson" data-i18n="btn_export_json">Экспорт в JSON</button>
+                <button class="btn" id="btnImportJson" data-i18n="btn_import_json">Импорт из JSON</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: SETTINGS -->
+        <div class="tab-content grid-2" id="tab-settings">
+            <div class="panel">
+                <div class="panel-title">⚙️ <span data-i18n="p_app_settings">Настройки Приложения</span></div>
+                
+                <div class="control-group">
+                    <label data-i18n="lbl_language">Язык интерфейса / Language:</label>
+                    <select id="appLanguage">
+                        <option value="ru">Русский (Russian)</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label data-i18n="lbl_hotkey">Клавиша отображения:</label>
+                    <select id="hotkeySelect">
+                        <option value="Alt">Alt (По умолчанию)</option>
+                        <option value="Control">Ctrl</option>
+                        <option value="Shift">Shift</option>
+                        <option value="Always">Всегда показно</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-row">
+                    <span data-i18n="chk_autostart">Автозапуск при старте Windows</span>
+                    <input type="checkbox" id="autoStart">
+                </div>
+
+                <div class="checkbox-row">
+                    <span data-i18n="chk_tray">Запускать свернутым в трей</span>
+                    <input type="checkbox" id="startInTray">
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">🔊 <span data-i18n="p_audio_stream">Звуки и Захват</span></div>
+                
+                <div class="checkbox-row">
+                    <span data-i18n="chk_sound_alerts">Звуковой сигнал за 10 сек</span>
+                    <input type="checkbox" id="soundAlerts" checked>
+                </div>
+
+                <div class="control-group">
+                    <label><span data-i18n="lbl_volume">Громкость оповещений</span> <span class="val" id="valVol">80%</span></label>
+                    <input type="range" id="soundVolume" min="0" max="100" value="80">
+                </div>
+
+                <div class="checkbox-row">
+                    <span data-i18n="chk_streamer_mode">Скрыть от OBS / Захвата</span>
+                    <input type="checkbox" id="streamerMode">
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btnApply" data-i18n="btn_apply">Применить</button>
+                <button class="btn" id="btnReset" data-i18n="btn_reset">Сброс</button>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-dot" id="gsiDot"></div>
+                    <span>GSI:</span> <span class="status-val" id="gsiStatus">Disconnected</span>
+                </div>
+                <div class="status-item">
+                    <span>Ver:</span> <span class="status-val">v1.0.0 Platinum</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/settings.js"></script>
+</body>
+</html>
